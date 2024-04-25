@@ -30,7 +30,7 @@ namespace parsing {
 
 template <class R, class W, bool _ignore_empty_containers, bool _all_required,
           class... FieldTypes>
-requires AreReaderAndWriter<R, W, NamedTuple<FieldTypes...>>
+  requires AreReaderAndWriter<R, W, NamedTuple<FieldTypes...>>
 struct NamedTupleParser {
   using InputObjectType = typename R::InputObjectType;
   using InputVarType = typename R::InputVarType;
@@ -96,12 +96,13 @@ struct NamedTupleParser {
     if constexpr (_i == size) {
       return Type{Type::Object{_values}};
     } else {
-      using F = std::tuple_element_t<_i, typename NamedTuple<FieldTypes...>::Fields>;
+      using F =
+          std::tuple_element_t<_i, typename NamedTuple<FieldTypes...>::Fields>;
       _values[std::string(F::name())] =
           Parser<R, W, typename F::Type>::to_schema(_definitions);
       return to_schema<_i + 1>(_definitions, _values);
     }
-  };
+  }
 
  private:
   template <int _i = 0>
